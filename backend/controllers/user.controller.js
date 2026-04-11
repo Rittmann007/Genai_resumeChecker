@@ -120,8 +120,25 @@ async function logoutuser(req,res) {
 
 }
 
+/**
+ * @name getcurrentuser
+ * @description gets the current user
+ * @access private
+ */
+function getcurrentuser(req,res) {
+   const user = req.user
+
+   if (!user) {
+      throw new ApiError(401,"user didn't exists")
+   }
+
+   return res.status(200)
+   .json(new ApiResponse(200,user,"user fetched successfully"))
+}
+
 module.exports = {
     registeruser,
     loginuser,
-    logoutuser
+    logoutuser,
+    getcurrentuser
 }
