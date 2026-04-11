@@ -1,6 +1,7 @@
 const ApiError = require("../utils/ApiError")
 const ApiResponse = require("../utils/ApiResponse")
 const User = require("../models/user.model")
+const TokenBlacklist = require("../models/tokenblacklist.model")
 
 /**
  * @name  registeruser
@@ -88,7 +89,39 @@ async function loginuser(req,res) {
 
 }
 
+// if we just remove token from cookie as logout
+//it wouldn't be secure because if another user has your
+//cookie somehow then it can access your account
+//most reliable method is to blacklist the cookie upon
+// loggin out, server maintains a list for blacklisted cookies for verification
+// usually blacklist is implemented with a db with high throughput like redis
+// here we will implement it with mongodb
+/**
+ * @name logoutuser
+ * @description logs out user
+ * @returns  success message
+ */
+async function logoutuser(req,res) {
+   const token = req.cookies.token
+
+   if (token) {
+      await TokenBlacklist.create({token})
+   }
+
+   const options = {
+      httpOnly: true,
+      secure: true
+   }
+
+   return res     // clearing all the cookies
+   .status(200)
+   .clearCookie("token",options)
+   .json(new ApiResponse(200,{},"user logged out"))
+
+}
+
 module.exports = {
     registeruser,
-    loginuser
+    loginuser,
+    logoutuser
 }
