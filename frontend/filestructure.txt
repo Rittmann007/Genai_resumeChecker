@@ -1,0 +1,11 @@
+feature based structure
+|
+|__>> 4 layer filestructure
+      |
+      |__>> Ui (for frontend)
+      |
+      |__>> Hook (for managing state and api layer)
+      |
+      |__>> State (for data store)
+      |
+      |__>> Api (for communication with backend)
