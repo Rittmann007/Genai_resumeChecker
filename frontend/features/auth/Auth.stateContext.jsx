@@ -2,7 +2,7 @@ import {createContext,useState} from "react"
 
 // using context api
 
-const Authcontext = createContext()
+const Authcontext = createContext() 
 
 function Authprovider({children}) {
     // the variables we are using it for
@@ -10,13 +10,13 @@ function Authprovider({children}) {
     const [loading, setloading] = useState(false)
 
     return (
-        <Authcontext.Provider value={user,setuser,loading,setloading}>
+        <Authcontext.Provider value={{user,setuser,loading,setloading}}>
             {children}
         </Authcontext.Provider>
     )
 }
 
-module.exports = {
+export {
     Authcontext,
     Authprovider
 }

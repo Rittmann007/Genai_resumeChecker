@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+const cors = require("cors")
 var logger = require('morgan');
 const dotenv = require("dotenv")
 dotenv.config()
@@ -22,6 +23,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors({
+  origin: "https://localhost:5173/",
+  credentials: true
+}))
 
 app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);

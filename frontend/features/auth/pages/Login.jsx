@@ -1,6 +1,22 @@
 import {Link} from 'react-router-dom'
+import {useState} from "react"
+import useAuth from "../Hooks/useAuth"
 
 function Login() {
+  const {loading,handlelogin} = useAuth()
+  const [username, setusername] = useState("")
+  const [password, setpassword] = useState("")
+
+  async function handlesubmit(e) {
+    e.preventDefault()
+    handlelogin({username,password})
+  }
+
+  if (loading) {
+    return (<h1>Loading ......</h1>)
+  }
+
+
   return (
     <div className='w-full min-h-screen bg-[#1f1f1f] text-white flex items-center justify-center px-4'>
       <div className='w-full max-w-md'>
@@ -9,7 +25,7 @@ function Login() {
             <h1 className='text-3xl font-semibold'>Login</h1>
           </div>
 
-          <form className='space-y-6'>
+          <form className='space-y-6' onSubmit={handlesubmit}>
             <div className='space-y-2'>
               <label htmlFor='username' className='block text-sm font-medium'>
                 Username
@@ -19,6 +35,7 @@ function Login() {
                 id='username'
                 name='username'
                 placeholder='Enter username'
+                onChange={(e)=>{setusername(e.target.value)}}
                 className='w-full rounded-lg px-4 py-3 outline-none border-2'
               />
             </div>
@@ -32,6 +49,7 @@ function Login() {
                 id='password'
                 name='password'
                 placeholder='Enter password'
+                onChange={(e)=>{setpassword(e.target.value)}}
                 className='w-full rounded-lg px-4 py-3 outline-none border-2'
               />
             </div>

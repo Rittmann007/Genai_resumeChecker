@@ -1,9 +1,9 @@
 import {useContext} from "react"
-import {Authcontext} from "../Auth.stateContext"
+import {Authcontext} from "../Auth.stateContext.jsx"
 import {login,logout,register} from "../api/auth.api"
 
 // custom hook for user and loading state handling
-function useAuth() {
+export default function useAuth() {
     const context = useContext(Authcontext)
     const {user,setuser,loading,setloading} = context
 
@@ -26,7 +26,5 @@ function useAuth() {
         setloading(false)
     }
 
-    return (user,loading,handleregister,handlelogin,handlelogout)
+    return {user,loading,handleregister,handlelogin,handlelogout}
 }
-
-module.exports = useAuth

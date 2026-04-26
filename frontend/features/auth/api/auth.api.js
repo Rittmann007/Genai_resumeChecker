@@ -1,4 +1,4 @@
-const axios = require("axios")
+import axios from "axios"
 
 async function register({username,email,password}) {
     try {
@@ -42,7 +42,7 @@ async function getuser() {
     }
 }
 
-module.exports = {
+export {
     register,
     login,
     logout,
