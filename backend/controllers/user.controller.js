@@ -62,13 +62,13 @@ async function loginuser(req,res) {
    const founduser = await User.findOne({username})
 
    if (!founduser) {
-    throw new ApiError(400,"user doesn't exists")
+    throw new ApiError(400,"username or password is incorrect")
    }
 
    const validpassword = await founduser.isPasswordCorrect(password)
 
    if (!validpassword) {
-      throw new ApiError(400,"password is incorrect")
+      throw new ApiError(400,"username or password is incorrect")
    }
 
    const token = await founduser.generateToken()
