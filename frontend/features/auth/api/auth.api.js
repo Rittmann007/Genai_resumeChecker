@@ -26,7 +26,6 @@ async function login({username,password}) {
 async function logout() {
     try {
         const response = await axios.post("http://localhost:3000/api/v1/users/logout",
-            {},
             {withCredentials: true}
         )
     } catch (error) {
@@ -36,7 +35,10 @@ async function logout() {
 
 async function getuser() {
     try {
-        const response = await axios.get("http://localhost:3000/api/v1/users/getuser")
+        const response = await axios.get("http://localhost:3000/api/v1/users/getuser",
+            {withCredentials: true}
+        )
+        return response.data
     } catch (error) {
         console.log(error)
     }

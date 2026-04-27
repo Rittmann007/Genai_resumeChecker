@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext,useEffect } from "react";
 import { Authcontext } from "../Auth.stateContext.jsx";
-import { login, logout, register } from "../api/auth.api";
+import { getuser, login, logout, register } from "../api/auth.api";
 
 // custom hook for user and loading state handling
 export default function useAuth() {
@@ -37,6 +37,19 @@ export default function useAuth() {
       setloading(false);
     }
   }
+
+  useEffect(() => {
+    async function getandsetuser() {
+      try {
+        const response = await getuser();
+        setuser(response.data);
+      } catch (error) {
+      } finally {
+        setloading(false);
+      }
+    }
+    getandsetuser();
+  }, []);
 
   return { user, loading, handleregister, handlelogin, handlelogout };
 }
