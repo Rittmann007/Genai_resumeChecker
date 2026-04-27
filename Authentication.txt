@@ -1,0 +1,27 @@
+Authentication flow
+
+backend----
+. register registers user and returns him
+. login logs in user and sets jwt token in cookies and also returns him
+. logout user logs out user by taking care of blacklist and removing cookies
+. now we have an auth middleware which verifies the middleware and sets req.user
+. getcurrentuser takes that req.user and returns the user
+
+frontend-----
+. in frontend we have our functions that do the api calling in auth.api.js
+. we also have a global state (loading and user) created using contextapi in Auth.stateContext.jsx
+. and atlast we have a custom hook which updates our global state with api functions in useAuth.js
+  it gives us user, loading, handleregister, handlelogin, handlelogout to be used effectively atlast
+  in these functions we set user variable with response from api and make loading false
+. Now in login and register we use handlelogin and handleregister and navigate to home.
+. now we want to make home protected so we made a protected component to check if user exists
+  before navigating anyone to home
+. but there is a problem once logged in user is set and user is navigated to home
+  if anyone refreshes this time then user being a state will return to its initial value
+  and the user would be told to log in again
+. to fix this we create a useeffect to run on every page refresh
+  it fetches data from getcurrentuser which depends on cookie to return user
+  in this way the session persists when page refreshes
+
+. in our register user auto logs in, so that he dont have to login again after register  
+

@@ -5,7 +5,7 @@ const TokenBlacklist = require("../models/tokenblacklist.model")
 
 /**
  * @name  registeruser
- * @description registers a new user, expects username,email,password in req 
+ * @description registers a new user then logs him in also, expects username,email,password in req 
  * @returns id,username,email of newly created user
  */
 
@@ -32,13 +32,22 @@ async function registeruser(req,res) {
     password
    })
 
+   const token = await createduser.generateToken()
+
    const resuser = {
     id: createduser._id,
     username,
     email
    }
 
-   return res.status(201).json(
+   const options = {
+      httpOnly: true,
+      secure: true
+   }
+
+   return res.status(201)
+   .cookie("token",token,options)
+   .json(
     new ApiResponse(200,resuser,"user created successfully")
    )
 
