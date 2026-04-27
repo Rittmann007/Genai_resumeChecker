@@ -1,15 +1,17 @@
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 import {useState} from "react"
 import useAuth from "../Hooks/useAuth"
 
 function Login() {
+  const navigate = useNavigate()
   const {loading,handlelogin} = useAuth()
   const [username, setusername] = useState("")
   const [password, setpassword] = useState("")
 
   async function handlesubmit(e) {
     e.preventDefault()
-    handlelogin({username,password})
+    await handlelogin({username,password})
+    navigate("/")
   }
 
   if (loading) {
