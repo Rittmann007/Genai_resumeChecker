@@ -7,11 +7,17 @@ const userschema = new mongoose.Schema({
         type: String,
         unique: [true,"username already taken"],
         required: true,
+        trim: true,
+        minlength: 3,
+        maxlength: 30
     },
     email: {
         type: String,
         unique: [true,"account already exists"],
         required: true,
+        lowercase: true,
+        trim: true,
+        match: [/^\S+@\S+\.\S+$/, 'Invalid email']
     },
     password: {
         type: String,
