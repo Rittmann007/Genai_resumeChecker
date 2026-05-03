@@ -10,13 +10,7 @@ const TokenBlacklist = require("../models/tokenblacklist.model")
  */
 
 async function registeruser(req,res) {
-    const {username,email,password} = req.body
-
-    if (
-      [username,email,password].some((field)=> field?.trim() === "")
-   ) {
-      throw new ApiError(400,"All fields are required")
-   } 
+   const {username,email,password} = req.body
 
    const user = await User.findOne({
     $or: [{username},{email}]
