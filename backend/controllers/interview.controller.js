@@ -6,7 +6,8 @@ const ApiError = require("../utils/ApiError")
 
 /**
  * @name generateInterviewReportController 
- * @description 
+ * @description generates the complete report saves to db and returns it
+ * @returns the complete interview report as response
  * @access private
  */
 async function generateInterviewReportController(req,res) {
