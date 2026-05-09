@@ -12,6 +12,10 @@ const geminiSchema = {
       type: "number",
       description: "Score between 0-100 indicating how well the candidate matches the job",
     },
+    title: {
+      type: "string",
+      description: "Title of the job"
+    },
     technicalQuestions: {
       type: "array",
       description: "Technical questions for the interview",
@@ -20,7 +24,7 @@ const geminiSchema = {
         properties: {
           question: { type: "string", description: "The technical question" },
           intention: { type: "string", description: "Why the interviewer asks this" },
-          answer: { type: "string", description: "How to answer this question effectively" },
+          answer: { type: "string", description: "approach to answer this question effectively" },
         },
         required: ["question", "intention", "answer"],
       },
@@ -33,7 +37,7 @@ const geminiSchema = {
         properties: {
           question: { type: "string", description: "The behavioural question" },
           intention: { type: "string", description: "Why the interviewer asks this" },
-          answer: { type: "string", description: "How to answer this question effectively" },
+          answer: { type: "string", description: "approach to answer this question effectively" },
         },
         required: ["question", "intention", "answer"],
       },
