@@ -1,81 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { useInterview } from '../Hooks/useInterview'
 
 function Interview() {
+  const {report} = useInterview()
   const { interviewID } = useParams()
   const [activeTab, setActiveTab] = useState('technical')
   const [interviewData, setInterviewData] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Dummy data - replace with API call
-  const dummyData = {
-    matchScore: 85,
-    technicalQuestions: [
-      {
-        question: "Can you explain the concept of Virtual DOM in React and why it's beneficial for performance?",
-        intention: "To assess the candidate's understanding of React's core mechanisms and performance optimization strategies beyond just using the library.",
-        answer: "The Virtual DOM is a lightweight copy of the actual DOM, represented as a JavaScript object. When a component's state changes, React first updates the Virtual DOM, then compares it with the previous Virtual DOM state (a process called 'diffing'). Only the differences are then 'reconciled' and updated in the real DOM. This is beneficial because direct manipulation of the real DOM is expensive and slow. By minimizing direct DOM operations, React significantly improves rendering performance."
-      },
-      {
-        question: "Describe a scenario where you would use `useMemo` or `useCallback` in a React component. What problem do they solve?",
-        intention: "To evaluate the candidate's knowledge of React hooks for performance optimization and their ability to apply them correctly.",
-        answer: "`useMemo` is used to memoize a computed value, preventing re-calculation on every render if its dependencies haven't changed. `useCallback` is used to memoize a function, preventing its re-creation on every render. They solve performance problems by preventing unnecessary re-renders of child components when props (values or functions) passed down haven't actually changed."
-      }
-    ],
-    behaviouralQuestions: [
-      {
-        question: "Tell me about a time you collaborated with a designer or backend engineer on a feature. How did you ensure a seamless user experience?",
-        intention: "To assess collaboration skills and the ability to bridge communication gaps between different teams to deliver integrated features.",
-        answer: "I would use the STAR method. Describe a specific project where I worked closely with a designer and a backend engineer. I would highlight proactive communication, clear documentation, sharing early prototypes, and iterative feedback loops to ensure alignment."
-      },
-      {
-        question: "Describe a challenging technical problem you've encountered and how you approached solving it.",
-        intention: "To evaluate problem-solving skills, resilience, and the ability to learn from difficulties.",
-        answer: "I would use the STAR method. Describe a specific, complex bug or performance bottleneck. Detail the steps taken and emphasize the iterative process and the specific technical knowledge gained."
-      }
-    ],
-    skillGaps: [
-      { skill: "Testing Frameworks (e.g., Jest, React Testing Library)", severity: "medium" },
-      { skill: "Build Tools (e.g., Webpack, Vite)", severity: "low" },
-      { skill: "CI/CD Pipelines", severity: "low" }
-    ],
-    preparationPlan: [
-      {
-        day: 1,
-        focus: "React.js Fundamentals & Advanced Concepts",
-        tasks: [
-          "Review React lifecycle methods, hooks (useState, useEffect, useContext, useRef, useReducer), and their common use cases.",
-          "Practice building a small application demonstrating data flow, component composition, and state management.",
-          "Deep dive into Virtual DOM, Reconciliation, and Fiber architecture."
-        ]
-      },
-      {
-        day: 2,
-        focus: "Redux & State Management",
-        tasks: [
-          "Revisit Redux core principles: Store, Actions, Reducers, Middleware.",
-          "Implement asynchronous operations with Redux Thunk and/or Redux Saga in a small project.",
-          "Understand Redux Toolkit as a modern approach to Redux development."
-        ]
-      },
-      {
-        day: 3,
-        focus: "JavaScript Proficiency & ES6+",
-        tasks: [
-          "Review core JavaScript concepts: closures, prototypes, event loop, 'this' keyword.",
-          "Practice ES6+ features: arrow functions, destructuring, spread/rest operators, Promises, async/await.",
-          "Solve 2-3 medium-difficulty LeetCode or HackerRank problems."
-        ]
-      }
-    ]
-  }
-
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setInterviewData(dummyData)
-      setLoading(false)
-    }, 500)
+    setInterviewData(report)
+    setLoading(false)
   }, [interviewID])
 
   if (loading) {
@@ -198,7 +134,13 @@ function Interview() {
       <div className='flex h-screen'>
         {/* Left Sidebar - Navigation */}
         <div className='w-80 bg-[#252525] border-r border-gray-700 p-6 overflow-y-auto'>
-          <div className='space-y-4'>
+          <div className='space-y-6'>
+            {/* Title */}
+            <div className='bg-[#2a2a2a] rounded-lg p-4 border border-gray-700'>
+              <p className='text-xs uppercase text-gray-500 mb-2'>Position</p>
+              <h2 className='text-lg font-bold text-red-500'>{interviewData.title}</h2>
+            </div>
+
             <h3 className='text-sm uppercase font-semibold text-gray-400 px-4'>Menu</h3>
 
             <button
