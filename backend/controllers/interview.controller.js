@@ -12,6 +12,8 @@ const ApiError = require("../utils/ApiError")
  */
 async function generateInterviewReportController(req,res) {
     const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText()
+    // const pdfData = await pdfParse(req.file.buffer)  // ✅ correct usage
+    // const resumeContent = pdfData.text
     const {selfDescription,jobDescription} = req.body
 
     if (!resumeContent || !selfDescription || !jobDescription) {

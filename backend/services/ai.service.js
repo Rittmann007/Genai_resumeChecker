@@ -78,6 +78,7 @@ const geminiSchema = {
   },
   required: [
     "matchScore",
+    "title",
     "technicalQuestions",
     "behaviouralQuestions",
     "skillGaps",
@@ -98,6 +99,7 @@ Job Description:
 ${jobdescription}
 
 Generate the following:
+0. title: title of the job
 1. matchScore (0-100): How well does this candidate match the job requirements?
 2. technicalQuestions (3-5): Questions testing technical skills, each with question, intention, and answer fields
 3. behaviouralQuestions (3-5): Questions assessing soft skills, each with question, intention, and answer fields
@@ -120,6 +122,7 @@ Generate the following:
 
   return {
     matchScore: typeof parsed.matchScore === "number" ? parsed.matchScore : 0,
+    title: parsed.title || "Interview Report",
     technicalQuestions: safeArray(parsed.technicalQuestions),
     behaviouralQuestions: safeArray(parsed.behaviouralQuestions),
     skillGaps: safeArray(parsed.skillGaps),
