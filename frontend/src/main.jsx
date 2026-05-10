@@ -4,12 +4,15 @@ import './index.css'
 import App from './App.jsx'
 import {BrowserRouter} from 'react-router-dom'
 import {Authprovider} from "../features/auth/Auth.stateContext.jsx"
+import { InterviewProvider } from '../features/Interview/Interview.stateContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
     <Authprovider>
-     <App />
+      <InterviewProvider>
+        <App />
+      </InterviewProvider>
     </Authprovider>
     </BrowserRouter>
   </StrictMode>,
