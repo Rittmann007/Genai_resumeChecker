@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useInterview } from "../Hooks/useInterview";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../../auth/pages/Navbar";
 
 function Home() {
   const { loading, generateReport } = useInterview();
@@ -37,20 +38,10 @@ function Home() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#1f1f1f] text-white flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-2xl">
-        {/* Header */}
-        <div className="space-y-2 text-center mb-12">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
-              <span className="text-xl font-bold">✓</span>
-            </div>
-          </div>
-          <h1 className="text-4xl font-bold">GenAI Resume Checker</h1>
-          <p className="text-gray-400 text-lg mt-2">
-            Analyze your resume against job requirements
-          </p>
-        </div>
+    <div className="w-full min-h-screen bg-[#1f1f1f] text-white flex flex-col">
+      <Navbar />
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-2xl">
 
         {/* Form Card */}
         <div className="bg-[#2a2a2a] rounded-2xl p-8 shadow-lg space-y-6">
@@ -135,6 +126,7 @@ function Home() {
               description and provide detailed feedback.
             </p>
           </div>
+        </div>
         </div>
       </div>
     </div>
