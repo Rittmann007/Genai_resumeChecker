@@ -51,6 +51,8 @@ export function useInterview() {
     useEffect(() => {
           if(interviewID){
             getReportByID(interviewID)
+          }else{
+            getAllReports()
           }
         }, [interviewID])
         
