@@ -1,18 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useState} from 'react'
 import { useInterview } from '../Hooks/useInterview'
 
 function Interview() {
-  const {report} = useInterview()
-  const { interviewID } = useParams()
+  const {report,loading} = useInterview()
   const [activeTab, setActiveTab] = useState('technical')
-  const [interviewData, setInterviewData] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    setInterviewData(report)
-    setLoading(false)
-  }, [interviewID])
 
   if (loading) {
     return (
@@ -27,7 +18,7 @@ function Interview() {
     )
   }
 
-  if (!interviewData) {
+  if (!report) {
     return (
       <div className='w-full min-h-screen bg-[#1f1f1f] text-white flex items-center justify-center'>
         <p className='text-gray-400'>No data available</p>
@@ -54,7 +45,7 @@ function Interview() {
         return (
           <div className='space-y-6'>
             <h2 className='text-2xl font-bold text-white mb-6'>Technical Questions</h2>
-            {interviewData.technicalQuestions.map((q, idx) => (
+            {report.technicalQuestions.map((q, idx) => (
               <div key={idx} className='bg-[#2a2a2a] rounded-lg p-6 space-y-4'>
                 <div>
                   <p className='text-sm text-gray-400 mb-2'>Question {idx + 1}</p>
@@ -76,7 +67,7 @@ function Interview() {
         return (
           <div className='space-y-6'>
             <h2 className='text-2xl font-bold text-white mb-6'>Behavioral Questions</h2>
-            {interviewData.behaviouralQuestions.map((q, idx) => (
+            {report.behaviouralQuestions.map((q, idx) => (
               <div key={idx} className='bg-[#2a2a2a] rounded-lg p-6 space-y-4'>
                 <div>
                   <p className='text-sm text-gray-400 mb-2'>Question {idx + 1}</p>
@@ -98,7 +89,7 @@ function Interview() {
         return (
           <div className='space-y-6'>
             <h2 className='text-2xl font-bold text-white mb-6'>7-Day Preparation Plan</h2>
-            {interviewData.preparationPlan.map((plan, idx) => (
+            {report.preparationPlan.map((plan, idx) => (
               <div key={idx} className='bg-[#2a2a2a] rounded-lg p-6 space-y-4'>
                 <div className='flex items-center gap-3'>
                   <div className='w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold'>
@@ -138,7 +129,7 @@ function Interview() {
             {/* Title */}
             <div className='bg-[#2a2a2a] rounded-lg p-4 border border-gray-700'>
               <p className='text-xs uppercase text-gray-500 mb-2'>Position</p>
-              <h2 className='text-lg font-bold text-red-500'>{interviewData.title}</h2>
+              <h2 className='text-lg font-bold text-red-500'>{report.title}</h2>
             </div>
 
             <h3 className='text-sm uppercase font-semibold text-gray-400 px-4'>Menu</h3>
@@ -192,12 +183,12 @@ function Interview() {
             <div className='text-center bg-[#2a2a2a] rounded-2xl p-8'>
               <p className='text-sm uppercase text-gray-400 mb-2'>Match Score</p>
               <div className='text-6xl font-bold text-red-600 mb-2'>
-                {interviewData.matchScore}%
+                {report.matchScore}%
               </div>
               <div className='w-full bg-gray-700 rounded-full h-2'>
                 <div
                   className='bg-red-600 h-2 rounded-full transition-all'
-                  style={{ width: `${interviewData.matchScore}%` }}
+                  style={{ width: `${report.matchScore}%` }}
                 ></div>
               </div>
               <p className='text-xs text-gray-400 mt-3'>Resume-Job Match</p>
@@ -208,7 +199,7 @@ function Interview() {
           <div>
             <h3 className='text-sm uppercase font-semibold text-gray-400 mb-4'>Skill Gaps</h3>
             <div className='space-y-3'>
-              {interviewData.skillGaps.map((gap, idx) => (
+              {report.skillGaps.map((gap, idx) => (
                 <div
                   key={idx}
                   className={`rounded-lg p-3 border-2 text-sm font-medium transition ${getSeverityColor(
