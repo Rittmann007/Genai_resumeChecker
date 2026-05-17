@@ -8,10 +8,51 @@ function Register() {
   const [username, setusername] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+  const [errors, seterrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Username validation
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) {
+      newErrors.username = "Username is required";
+    } else if (trimmedUsername.length < 3 || trimmedUsername.length > 30) {
+      newErrors.username = "Username must be 3-30 characters";
+    }
+
+    // Email validation
+    const trimmedEmail = email.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!trimmedEmail) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(trimmedEmail)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    seterrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   async function handlesubmit(e) {
     e.preventDefault();
-    await handleregister({ username, email, password });
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    await handleregister({ 
+      username: username.trim(), 
+      email: email.trim(), 
+      password 
+    });
     navigate("/");
   }
 
@@ -46,26 +87,45 @@ function Register() {
                 id="username"
                 name="username"
                 placeholder="Enter username"
+                value={username}
                 onChange={(e) => {
                   setusername(e.target.value);
+                  if (errors.username) {
+                    seterrors({ ...errors, username: "" });
+                  }
                 }}
-                className="w-full rounded-lg px-4 py-3 outline-none border-2"
+                className={`w-full rounded-lg px-4 py-3 outline-none border-2 bg-[#1f1f1f] ${
+                  errors.username ? "border-red-500" : "border-gray-600"
+                }`}
               />
+              {errors.username && (
+                <p className="text-sm text-red-400">{errors.username}</p>
+              )}
             </div>
+
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-medium">
                 Email
               </label>
               <input
-                type="email"
+                type="text"
                 id="email"
                 name="email"
                 placeholder="Enter email"
+                value={email}
                 onChange={(e) => {
                   setemail(e.target.value);
+                  if (errors.email) {
+                    seterrors({ ...errors, email: "" });
+                  }
                 }}
-                className="w-full rounded-lg px-4 py-3 outline-none border-2"
+                className={`w-full rounded-lg px-4 py-3 outline-none border-2 bg-[#1f1f1f] ${
+                  errors.email ? "border-red-500" : "border-gray-600"
+                }`}
               />
+              {errors.email && (
+                <p className="text-sm text-red-400">{errors.email}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -77,16 +137,25 @@ function Register() {
                 id="password"
                 name="password"
                 placeholder="Enter password"
+                value={password}
                 onChange={(e) => {
                   setpassword(e.target.value);
+                  if (errors.password) {
+                    seterrors({ ...errors, password: "" });
+                  }
                 }}
-                className="w-full rounded-lg px-4 py-3 outline-none border-2"
+                className={`w-full rounded-lg px-4 py-3 outline-none border-2 bg-[#1f1f1f] ${
+                  errors.password ? "border-red-500" : "border-gray-600"
+                }`}
               />
+              {errors.password && (
+                <p className="text-sm text-red-400">{errors.password}</p>
+              )}
             </div>
 
             <button
               type="submit"
-              className="w-full rounded-lg px-4 py-3 font-medium bg-red-600"
+              className="w-full rounded-lg px-4 py-3 font-medium bg-red-600 hover:bg-red-700 transition"
             >
               Register
             </button>
