@@ -7,7 +7,7 @@ async function register({username,email,password}) {
         )
         return response.data
     } catch (error) {
-        console.log(error)
+        throw error
     }
 }
 
@@ -19,7 +19,7 @@ async function login({username,password}) {
         )
         return response.data
     } catch (error) {
-        console.log(error)
+        throw error
     }
 }
 
@@ -29,7 +29,7 @@ async function logout() {
             {withCredentials: true}
         )
     } catch (error) {
-        console.log(error)
+        throw error
     }
 }
 
@@ -40,7 +40,7 @@ async function getuser() {
         )
         return response.data
     } catch (error) {
-        console.log(error)
+        throw error
     }
 }
 

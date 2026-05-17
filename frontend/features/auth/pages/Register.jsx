@@ -4,7 +4,7 @@ import useAuth from "../Hooks/useAuth";
 
 function Register() {
   const navigate = useNavigate();
-  const { loading, handleregister } = useAuth();
+  const { loading, handleregister, error, seterror } = useAuth();
   const [username, setusername] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
@@ -49,11 +49,11 @@ function Register() {
     }
 
     await handleregister({ 
-      username: username.trim(), 
-      email: email.trim(), 
-      password 
-    });
-    navigate("/");
+        username: username.trim(), 
+        email: email.trim(), 
+        password 
+      });
+      navigate("/");
   }
 
   if (loading) {
@@ -77,6 +77,12 @@ function Register() {
             <h1 className="text-3xl font-semibold">Register</h1>
           </div>
 
+          {error && (
+            <div className="bg-red-900/20 border border-red-600 rounded-lg p-3">
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          )}
+
           <form className="space-y-6" onSubmit={handlesubmit}>
             <div className="space-y-2">
               <label htmlFor="username" className="block text-sm font-medium">
@@ -92,6 +98,9 @@ function Register() {
                   setusername(e.target.value);
                   if (errors.username) {
                     seterrors({ ...errors, username: "" });
+                  }
+                  if (error) {
+                    seterror(null);
                   }
                 }}
                 className={`w-full rounded-lg px-4 py-3 outline-none border-2 bg-[#1f1f1f] ${
@@ -118,6 +127,9 @@ function Register() {
                   if (errors.email) {
                     seterrors({ ...errors, email: "" });
                   }
+                  if (error) {
+                    seterror(null);
+                  }
                 }}
                 className={`w-full rounded-lg px-4 py-3 outline-none border-2 bg-[#1f1f1f] ${
                   errors.email ? "border-red-500" : "border-gray-600"
@@ -142,6 +154,9 @@ function Register() {
                   setpassword(e.target.value);
                   if (errors.password) {
                     seterrors({ ...errors, password: "" });
+                  }
+                  if (error) {
+                    seterror(null);
                   }
                 }}
                 className={`w-full rounded-lg px-4 py-3 outline-none border-2 bg-[#1f1f1f] ${
