@@ -4,14 +4,14 @@ import useAuth from "../Hooks/useAuth";
 
 function Login() {
   const navigate = useNavigate();
-  const { loading, handlelogin } = useAuth();
+  const { loading, handlelogin, error, seterror } = useAuth();
   const [username, setusername] = useState("");
   const [password, setpassword] = useState("");
 
   async function handlesubmit(e) {
     e.preventDefault();
-    await handlelogin({ username, password });
-    navigate("/");
+      await handlelogin({ username, password });
+      navigate("/");
   }
 
   if (loading) {
@@ -35,6 +35,12 @@ function Login() {
             <h1 className="text-3xl font-semibold">Login</h1>
           </div>
 
+          {error && (
+            <div className="bg-red-900/20 border border-red-600 rounded-lg p-3">
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          )}
+
           <form className="space-y-6" onSubmit={handlesubmit}>
             <div className="space-y-2">
               <label htmlFor="username" className="block text-sm font-medium">
@@ -45,8 +51,12 @@ function Login() {
                 id="username"
                 name="username"
                 placeholder="Enter username"
+                value={username}
                 onChange={(e) => {
                   setusername(e.target.value);
+                  if (error) {
+                    seterror(null);
+                  }
                 }}
                 className="w-full rounded-lg px-4 py-3 outline-none border-2"
               />
@@ -61,8 +71,12 @@ function Login() {
                 id="password"
                 name="password"
                 placeholder="Enter password"
+                value={password}
                 onChange={(e) => {
                   setpassword(e.target.value);
+                  if (error) {
+                    seterror(null);
+                  }
                 }}
                 className="w-full rounded-lg px-4 py-3 outline-none border-2"
               />
@@ -70,7 +84,7 @@ function Login() {
 
             <button
               type="submit"
-              className="w-full rounded-lg px-4 py-3 font-medium bg-red-600"
+              className="w-full rounded-lg px-4 py-3 font-medium bg-red-600 hover:bg-red-700 transition"
             >
               Login
             </button>
