@@ -1,4 +1,5 @@
 const { GoogleGenAI } = require("@google/genai");
+const puppeteer = require("puppeteer");
 
 const Ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GENAI_API_KEY,
@@ -10,11 +11,12 @@ const geminiSchema = {
   properties: {
     matchScore: {
       type: "number",
-      description: "Score between 0-100 indicating how well the candidate matches the job",
+      description:
+        "Score between 0-100 indicating how well the candidate matches the job",
     },
     title: {
       type: "string",
-      description: "Title of the job"
+      description: "Title of the job",
     },
     technicalQuestions: {
       type: "array",
@@ -23,8 +25,14 @@ const geminiSchema = {
         type: "object",
         properties: {
           question: { type: "string", description: "The technical question" },
-          intention: { type: "string", description: "Why the interviewer asks this" },
-          answer: { type: "string", description: "approach to answer this question effectively" },
+          intention: {
+            type: "string",
+            description: "Why the interviewer asks this",
+          },
+          answer: {
+            type: "string",
+            description: "approach to answer this question effectively",
+          },
         },
         required: ["question", "intention", "answer"],
       },
@@ -36,8 +44,14 @@ const geminiSchema = {
         type: "object",
         properties: {
           question: { type: "string", description: "The behavioural question" },
-          intention: { type: "string", description: "Why the interviewer asks this" },
-          answer: { type: "string", description: "approach to answer this question effectively" },
+          intention: {
+            type: "string",
+            description: "Why the interviewer asks this",
+          },
+          answer: {
+            type: "string",
+            description: "approach to answer this question effectively",
+          },
         },
         required: ["question", "intention", "answer"],
       },
@@ -65,7 +79,10 @@ const geminiSchema = {
         type: "object",
         properties: {
           day: { type: "number", description: "Day number starting from 1" },
-          focus: { type: "string", description: "Main focus topic for this day" },
+          focus: {
+            type: "string",
+            description: "Main focus topic for this day",
+          },
           tasks: {
             type: "array",
             items: { type: "string" },
@@ -86,7 +103,7 @@ const geminiSchema = {
   ],
 };
 
-async function generateInterviewReport({ jobdescription, resume, selfdescription }) {
+async function generateInterviewReport({jobdescription,resume,selfdescription,}){
   const prompt = `You are an expert interview coach. Analyze the candidate's profile and generate a comprehensive interview report.
 
 Resume:
@@ -130,4 +147,142 @@ Generate the following:
   };
 }
 
-module.exports = generateInterviewReport;
+async function convertHtmlToPdf(html){
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(html, { waitUntil: "networkidle0" });
+  const pdfBuffer = await page.pdf({ format: "A4",
+    printBackground: true,
+    preferCSSPageSize: true,   // ← respects your @page { size: A4 } CSS
+    margin: {
+      top: "15mm",
+      bottom: "15mm",
+      left: "15mm",
+      right: "15mm",
+  },
+  displayHeaderFooter: false,
+   });
+
+  await browser.close();
+
+  return pdfBuffer;
+}
+
+async function generateResumePdf({ jobdescription, resume, selfdescription }) {
+  const resumePdfSchema = {
+    type: "object",
+    properties: {
+      html: {
+        type: "string",
+        description:
+          "the html content of the resume which can be converted to pdf using puppeteer npm package",
+      },
+    },
+    required: ["html"],
+  };
+
+  const prompt = `You are an expert resume writer and ATS optimization specialist. Your task is to generate a professional, ATS-friendly HTML resume that will be converted to PDF using Puppeteer.
+
+## Input Details
+Resume/Experience: ${resume}
+Self Description: ${selfdescription}
+Job Description: ${jobdescription}
+
+## Critical Requirements
+
+### ATS Optimization
+- Use standard section headings: "Work Experience", "Education", "Skills", "Projects", "Summary"
+- Use plain readable fonts (Arial, Calibri, or Georgia) — no icons, graphics, or tables for layout
+- Include keywords and phrases extracted directly from the job description
+- No headers/footers, no text in images, no columns (ATS cannot parse multi-column layouts)
+- Use semantic HTML: <h1> for name, <h2> for sections, <ul>/<li> for bullets
+
+### Page Length Rule (STRICTLY FOLLOW)
+- Fresher (0-2 years experience): EXACTLY 1 A4 page
+- Mid-level (2-5 years): 1 to 1.5 A4 pages
+- Senior (5+ years): maximum 2 A4 pages
+- Achieve this through font size (10-11px body), margins (15mm), and content density
+- If content exceeds the limit, summarize or remove least relevant points
+
+### HTML Structure Rules
+- The HTML must be a complete document starting with <!DOCTYPE html>
+- All CSS must be inside a single <style> block in <head> — no inline styles
+- No JavaScript, no external resources, no Google Fonts — system fonts only
+- No flexbox or grid for main layout — use block elements only (ATS parsers break on these)
+- The HTML must be fully self-contained and render correctly with Puppeteer
+
+### Puppeteer-Compatible CSS (MUST INCLUDE EXACTLY)
+Include these rules in your <style> block without modification:
+@page {
+  size: A4;
+  margin: 15mm;
+}
+* {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  box-sizing: border-box;
+}
+h2 {
+  page-break-after: avoid;
+}
+li, p {
+  page-break-inside: avoid;
+}
+.section {
+  page-break-inside: avoid;
+  margin-bottom: 12px;
+}
+
+### Typography & Sizing
+- Candidate name: 20-22px, bold
+- Section headings (<h2>): 13-14px, bold, uppercase, with a bottom border
+- Body text: 10-11px
+- Line height: 1.4
+- Color: #1a1a1a text on #ffffff background only — no colored backgrounds
+
+### Content Rules
+- Tailor every bullet point to mirror keywords from the job description
+- Quantify achievements wherever possible (e.g. "Improved page load speed by 30%")
+- Use strong action verbs: Built, Developed, Optimized, Led, Designed, Implemented
+- Remove experience irrelevant to the job description
+- Keep each bullet point to 1 line, maximum 2 lines
+- Summary: 2-3 lines maximum, tailored to the job description
+- Skills section: comma-separated or grouped by category — no skill bars or ratings
+
+### Section Order
+1. Candidate Name + Contact Info (email, phone, LinkedIn, GitHub if available)
+2. Professional Summary
+3. Skills
+4. Work Experience (reverse chronological)
+5. Projects (if relevant)
+6. Education
+
+## Output Format
+Return ONLY a valid JSON object with a single field "html" containing the complete HTML string.
+Do not include any explanation, markdown, code fences, or text outside the JSON object.
+The JSON must be parseable by JSON.parse() directly.
+
+Correct format:
+  {"html": "<!DOCTYPE html><html><head>...</head><body>...</body></html>"}`;
+
+
+  const response = await Ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: resumePdfSchema,
+    },
+  });
+
+  const jsonContent = JSON.parse(response.text);
+
+  if (jsonContent.html){
+    const pdfBuffer = await convertHtmlToPdf(jsonContent.html);
+    return pdfBuffer;
+  }
+
+  
+}
+
+module.exports = { generateInterviewReport, generateResumePdf };

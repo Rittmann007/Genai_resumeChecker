@@ -1,5 +1,5 @@
 const pdfParse = require("pdf-parse")
-const generateInterviewReport = require("../services/ai.service")
+const {generateInterviewReport,generateResumePdf} = require("../services/ai.service")
 const interviewReport = require("../models/interviewReport.model")
 const ApiResponse = require("../utils/ApiResponse")
 const ApiError = require("../utils/ApiError")
@@ -76,4 +76,36 @@ async function getAllInterviewReportsController(req,res) {
     .json(new ApiResponse(200,Reports,"Reports fetched successfully"))
 }
 
-module.exports = {generateInterviewReportController,getInterviewReportByIDController,getAllInterviewReportsController}
+/**
+ * @name generateInterviewReportController
+ * @description gives a pdf of the updated resume based on the
+ * given jobdescription,resume,selfdescription
+ * @input interviewID from params
+ * @returns a resume pdf
+ * @access private
+ */
+async function generateResumePdfController(req,res) {
+    const {interviewID} = req.params
+    const report = await interviewReport.findById(interviewID)
+    
+    if (!report) {
+        throw new ApiError(404,"report not found")
+    }
+
+    const {resume,jobDescription,selfDescription} = report
+
+    const pdfBuffer = await generateResumePdf({jobDescription,resume,selfDescription})
+
+    res.set({
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename=resume_${interviewID}.pdf`
+    })
+
+    res.send(pdfBuffer)
+
+}
+
+module.exports = {generateInterviewReportController
+    ,getInterviewReportByIDController
+    ,getAllInterviewReportsController
+,generateResumePdfController}
