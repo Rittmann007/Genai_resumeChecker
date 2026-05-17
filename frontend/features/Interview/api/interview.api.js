@@ -32,8 +32,20 @@ async function getAllInterviewReports() {
     return response.data
 }
 
+async function generateResumePdf({interviewID}) {
+    const response = await axios.post(`http://localhost:3000/api/v1/interview/resume/Pdf/${interviewID}`,
+        null,
+        {responseType: "blob",
+            withCredentials: true
+        }
+    )
+
+    return response.data
+}
+
 export {
     generateInterviewReport,
     getInterviewReportByID,
-    getAllInterviewReports
+    getAllInterviewReports,
+    generateResumePdf
 }

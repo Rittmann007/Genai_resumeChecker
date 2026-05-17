@@ -3,7 +3,7 @@ import { useInterview } from '../Hooks/useInterview'
 import Navbar from '../../auth/pages/Navbar'
 
 function Interview() {
-  const {report,loading} = useInterview()
+  const {report,loading,getPdf} = useInterview()
   const [activeTab, setActiveTab] = useState('technical')
 
   if (loading) {
@@ -174,6 +174,15 @@ function Interview() {
             >
               📅 Preparation Plan
             </button>
+
+            <div className='border-t border-gray-600 pt-4 mt-4'>
+              <button
+                onClick={() => getPdf(report._id)}
+                className='w-full px-4 py-3 rounded-lg font-medium bg-gray-700 hover:bg-gray-600 text-white transition'
+              >
+                📥 Download AI Resume
+              </button>
+            </div>
           </div>
         </div>
 
