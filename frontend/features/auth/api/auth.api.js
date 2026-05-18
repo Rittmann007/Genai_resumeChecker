@@ -25,7 +25,7 @@ async function login({username,password}) {
 
 async function logout() {
     try {
-        const response = await axios.post("http://localhost:3000/api/v1/users/logout",
+        const response = await axios.post("http://localhost:3000/api/v1/users/logout",{},
             {withCredentials: true}
         )
     } catch (error) {
