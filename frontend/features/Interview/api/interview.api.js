@@ -1,7 +1,8 @@
 import axios from "axios"
 
 async function generateInterviewReport({jobDescription,selfDescription,resumeFile}) {
-    const formdata = new FormData()
+    try {
+        const formdata = new FormData()
     formdata.append("jobDescription",jobDescription)// for sending files
     formdata.append("selfDescription",selfDescription)
     formdata.append("resume",resumeFile)
@@ -14,26 +15,41 @@ async function generateInterviewReport({jobDescription,selfDescription,resumeFil
     )
 
     return response.data
+    } catch (error) {
+        throw error
+    }
+    
 }
 
 async function getInterviewReportByID(interviewID) {
-    const response = await axios.get(`http://localhost:3000/api/v1/interview/report/${interviewID}`,
+    try {
+        const response = await axios.get(`http://localhost:3000/api/v1/interview/report/${interviewID}`,
         {withCredentials:true}
     )
 
     return response.data
+    } catch (error) {
+        throw error
+    }
+    
 }
 
 async function getAllInterviewReports() {
-    const response = await axios.get("http://localhost:3000/api/v1/interview/allreports",
+    try {
+        const response = await axios.get("http://localhost:3000/api/v1/interview/allreports",
         {withCredentials:true}
     )
 
     return response.data
+    } catch (error) {
+        throw error
+    }
+    
 }
 
 async function generateResumePdf({interviewID}) {
-    const response = await axios.post(`http://localhost:3000/api/v1/interview/resume/Pdf/${interviewID}`,
+    try {
+        const response = await axios.post(`http://localhost:3000/api/v1/interview/resume/Pdf/${interviewID}`,
         null,
         {responseType: "blob",
             withCredentials: true
@@ -41,6 +57,10 @@ async function generateResumePdf({interviewID}) {
     )
 
     return response.data
+    } catch (error) {
+        throw error
+    }
+    
 }
 
 export {

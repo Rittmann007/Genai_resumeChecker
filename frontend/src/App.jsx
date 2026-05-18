@@ -6,6 +6,8 @@ import Protected from '../features/auth/components/Protected'
 import Home from '../features/Interview/Pages/Home'
 import Interview from '../features/Interview/Pages/Interview'
 import ReportsHistory from '../features/Interview/Pages/ReportsHistory'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
 
@@ -18,6 +20,16 @@ function App() {
         <Route path='/interview/:interviewID' element={<Protected><Interview/></Protected>}></Route>
         <Route path='/interview/history' element={<Protected><ReportsHistory/></Protected>}></Route>
       </Routes>
+      // for error alerts
+      <ToastContainer
+        position="bottom-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"/>
    </>
   )
 }

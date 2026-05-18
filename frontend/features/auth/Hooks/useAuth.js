@@ -1,6 +1,7 @@
 import { useContext,useState,useEffect } from "react";
 import { Authcontext } from "../Auth.stateContext.jsx";
 import { getuser, login, logout, register } from "../api/auth.api";
+import {toast} from "react-toastify"
 
 // custom hook for user and loading state handling
 export default function useAuth() {
@@ -43,6 +44,7 @@ export default function useAuth() {
       const response = await logout();
       setuser(null);
     } catch (error) {
+      toast.error("Logout failed..")
     } finally {
       setloading(false);
     }
@@ -54,6 +56,7 @@ export default function useAuth() {
         const response = await getuser();
         setuser(response.data);
       } catch (error) {
+        toast.error("Cannot fetch user..")
       } finally {
         setloading(false);
       }

@@ -2,6 +2,7 @@ import {generateInterviewReport,getInterviewReportByID,getAllInterviewReports, g
 import {useContext, useState,useEffect} from "react"
 import {useParams} from "react-router-dom"
 import {InterviewContext} from "../Interview.stateContext"
+import {toast} from "react-toastify"
 
 export function useInterview() {
     const context = useContext(InterviewContext)
@@ -16,7 +17,7 @@ export function useInterview() {
             setreport(response.data)
             return response.data
         } catch (error) {
-            
+            toast.error("Error while generating report..")
         }finally {
             setloading(false)
         }
@@ -29,7 +30,7 @@ export function useInterview() {
             setreport(response.data)
             return response.data
         } catch (error) {
-            
+            toast.error("Couldn't fetch report..")
         } finally {
             setloading(false)
         }
@@ -42,7 +43,7 @@ export function useInterview() {
             setreports(response.data)
             return response.data
         } catch (error) {
-            
+            toast.error("Couldn't fetch reports..")
         } finally {
             setloading(false)
         }
@@ -59,7 +60,7 @@ export function useInterview() {
             document.body.appendChild(link)
             link.click()
         } catch (error) {
-            
+            toast.error("Error while generating pdf")
         }finally{
             setloading(false)
         }
