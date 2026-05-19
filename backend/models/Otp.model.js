@@ -16,6 +16,9 @@ const otpSchema = new mongoose.Schema({
     }
 },{timestamps: true})
 
-const otpModel = new mongoose.model("otpModel",otpSchema)
+// Add TTL index - OTP expires after 600 seconds (10 minutes)
+otpSchema.index({createdAt: 1}, {expireAfterSeconds: 600})
+
+const otpModel = mongoose.model("otpModel",otpSchema)
 
 module.exports = otpModel

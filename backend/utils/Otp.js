@@ -1,5 +1,5 @@
 function generateOtp() {
-    return Math.floor(100000 + Math.random() * 900000).toString
+    return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
 function getOtpHtml(otp) {
@@ -41,3 +41,5 @@ function getOtpHtml(otp) {
 </body>
 </html>`
 }
+
+module.exports = {generateOtp,getOtpHtml}

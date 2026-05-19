@@ -23,7 +23,7 @@ transporter.verify((error,success)=>{
 async function sendEmail(to,subject,text,html) {
     try {
         const info = await transporter.sendMail({
-            from: `"Rittmann"<${process.env.GOOGLE_USER}>`,
+            from: `"GenAi-ResumeChecker"<${process.env.GOOGLE_USER}>`,
             to,
             subject,
             text,
