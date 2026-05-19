@@ -2,6 +2,10 @@ const ApiError = require("../utils/ApiError")
 const ApiResponse = require("../utils/ApiResponse")
 const User = require("../models/user.model")
 const TokenBlacklist = require("../models/tokenblacklist.model")
+const sendEmail = require("../services/email.service")
+const {generateOtp,getOtpHtml} = require("../utils/Otp")
+const bcrypt = require("bcrypt")
+const otpModel = require("../models/Otp.model")
 
 /**
  * @name  registeruser
@@ -26,23 +30,30 @@ async function registeruser(req,res) {
     password
    })
 
-   const token = await createduser.generateToken()
+   //for email otp conformation
+   const otp = generateOtp()
+   const html = getOtpHtml(otp)
+
+   const otphash = await bcrypt.hash(otp,10)
+
+   await otpModel.create({
+      email,
+      user: createduser._id,
+      otpHash: otphash
+   })
+
+   await sendEmail(email,"OTP verification",`Your OTP code is ${otp}`,html)
 
    const resuser = {
     id: createduser._id,
     username,
-    email
-   }
-
-   const options = {
-      httpOnly: true,
-      secure: true
+    email,
+    verified: createduser.verified
    }
 
    return res.status(201)
-   .cookie("token",token,options)
    .json(
-    new ApiResponse(200,resuser,"user created successfully")
+    new ApiResponse(200,resuser,"user created. check your email for OTP")
    )
 
 }
@@ -66,6 +77,10 @@ async function loginuser(req,res) {
 
    if (!founduser) {
     throw new ApiError(400,"username or password is incorrect")
+   }
+
+   if (!founduser.verified) {
+      throw new ApiError(400,"email not verified")
    }
 
    const validpassword = await founduser.isPasswordCorrect(password)
@@ -139,9 +154,63 @@ function getcurrentuser(req,res) {
    .json(new ApiResponse(200,user,"user fetched successfully"))
 }
 
+/**
+ * @name verifyEmail
+ * @description verifies the given email with given otp
+ * @returns verified user details
+ * @access public
+ */
+async function verifyEmail(req,res) {
+   const {otp,email} = req.body
+
+   if (!otp || !email) {
+      throw new ApiError(400, "OTP and email are required")
+   }
+
+   // Find the OTP record for this email
+   const otpRecord = await otpModel.findOne({email})
+
+   if (!otpRecord) {
+      throw new ApiError(400, "OTP expired or not found")
+   }
+
+   // Compare provided OTP with stored hash
+   const isOtpValid = await bcrypt.compare(otp, otpRecord.otpHash)
+
+   if (!isOtpValid) {
+      throw new ApiError(400, "Invalid OTP")
+   }
+
+   // Find and update user as verified
+   const user = await User.findByIdAndUpdate(otpRecord.user,{verified:true},{new: true})
+
+   // Delete OTP record after verification
+   await otpModel.deleteOne({_id: otpRecord._id})
+
+   // generate token after verification
+   const token = await user.generateToken()
+
+   const data = {
+      id: user._id,
+      user: user.username,
+      email,
+      verified: user.verified
+   }
+
+   const options = {
+      httpOnly: true,
+      secure: true
+   }
+
+   return res.status(200)
+   .cookie("token",token,options)
+   .json(new ApiResponse(200,data, "Email verified successfully"))
+}
+
 module.exports = {
     registeruser,
     loginuser,
     logoutuser,
-    getcurrentuser
+    getcurrentuser,
+    verifyEmail
 }
