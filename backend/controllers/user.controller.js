@@ -9,7 +9,7 @@ const otpModel = require("../models/Otp.model")
 
 /**
  * @name  registeruser
- * @description registers a new user then logs him in also, expects username,email,password in req 
+ * @description registers a new user then sends him otp email,for verification, expects username,email,password in req 
  * @returns id,username,email of newly created user
  */
 
@@ -156,7 +156,7 @@ function getcurrentuser(req,res) {
 
 /**
  * @name verifyEmail
- * @description verifies the given email with given otp
+ * @description verifies the given email with given otp,then logs user by creating token
  * @returns verified user details
  * @access public
  */
