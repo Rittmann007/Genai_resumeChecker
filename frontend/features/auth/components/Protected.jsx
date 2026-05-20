@@ -16,7 +16,7 @@ function Protected({children}) {
         </div>
       </div>)
     }
-    if (!user) {
+    if (!user || !user.verified) {
         return <Navigate to={"/login"}/>
     }
   return children
