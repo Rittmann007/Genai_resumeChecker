@@ -72,7 +72,15 @@ export default function useAuth() {
         const response = await getuser();
         setuser(response.data);
       } catch (error) {
-        toast.error("Cannot fetch user..")
+        const status = error?.response?.status;
+
+        if (status === 401) {
+          // Expected when user is logged out or token expired
+          setuser(null);
+        } else {
+          // Real errors (server down, network, 500, etc.)
+          toast.error("Cannot fetch user..");
+        }
       } finally {
         setloading(false);
       }

@@ -22,7 +22,7 @@ function App() {
         <Route path='/interview/:interviewID' element={<Protected><Interview/></Protected>}></Route>
         <Route path='/interview/history' element={<Protected><ReportsHistory/></Protected>}></Route>
       </Routes>
-      // for error alerts
+      {/* for error alerts */}
       <ToastContainer
         position="bottom-right"
         autoClose={4000}
