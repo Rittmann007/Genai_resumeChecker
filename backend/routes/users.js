@@ -33,6 +33,6 @@ router.post("/logout",logoutuser)
 
 router.get("/getuser",authUser,getcurrentuser)
 
-router.get("/verify-email",verifyEmail)
+router.post("/verify-email",verifyEmail)
 
 module.exports = router;
