@@ -8,6 +8,7 @@ import Interview from '../features/Interview/Pages/Interview'
 import ReportsHistory from '../features/Interview/Pages/ReportsHistory'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import OtpSubmit from '../features/auth/pages/OtpSubmit'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route path='/' element={<Protected><Home/></Protected>}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/register' element={<Register/>}></Route>
+        <Route path='/verify-otp' element={<OtpSubmit/>}></Route>
         <Route path='/interview/:interviewID' element={<Protected><Interview/></Protected>}></Route>
         <Route path='/interview/history' element={<Protected><ReportsHistory/></Protected>}></Route>
       </Routes>

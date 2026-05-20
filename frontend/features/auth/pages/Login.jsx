@@ -10,8 +10,13 @@ function Login() {
 
   async function handlesubmit(e) {
     e.preventDefault();
+      try {
       await handlelogin({ username, password });
       navigate("/");
+    } catch (error) {
+      // Error already handled by handlelogin in useAuth
+      // Don't navigate
+    }
   }
 
   if (loading) {

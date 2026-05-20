@@ -53,7 +53,7 @@ function Register() {
         email: email.trim(), 
         password 
       });
-      navigate("/");
+      navigate("/verify-otp", { state: { email: email.trim() } });
   }
 
   if (loading) {
