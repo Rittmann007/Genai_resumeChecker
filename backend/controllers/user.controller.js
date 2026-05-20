@@ -93,7 +93,8 @@ async function loginuser(req,res) {
 
    const loggedinuser = {
       id:founduser._id,
-      username
+      username,
+      verified: founduser.verified
    }
 
    const options = {
@@ -192,7 +193,7 @@ async function verifyEmail(req,res) {
 
    const data = {
       id: user._id,
-      user: user.username,
+      username: user.username,
       email,
       verified: user.verified
    }
