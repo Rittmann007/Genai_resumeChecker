@@ -10,23 +10,23 @@ const otpModel = require("../models/Otp.model")
 /**
  * @name  registeruser
  * @description registers a new user then sends him otp email,for verification, expects username,email,password in req 
- * @returns id,username,email of newly created user
+ * @returns id,username,email,verified flag of newly created user
  */
 
 async function registeruser(req,res) {
    const {username,email,password} = req.body
+   const Normalizedusername = username?.trim()
+   const Normalizedemail = email?.trim().toLowerCase()
 
-   const user = await User.findOne({
-    $or: [{username},{email}]
-   })
+   const user = await User.findOne({email:Normalizedemail})
 
    if (user) {
     throw new ApiError(400,"user already exists")
    }
 
    const createduser = await User.create({
-    username,
-    email,
+    username:Normalizedusername,
+    email:Normalizedemail,
     password
    })
 
@@ -37,46 +37,48 @@ async function registeruser(req,res) {
    const otphash = await bcrypt.hash(otp,10)
 
    await otpModel.create({
-      email,
+      email:Normalizedemail,
       user: createduser._id,
       otpHash: otphash
    })
 
-   await sendEmail(email,"OTP verification",`Your OTP code is ${otp}`,html)
+   await sendEmail(Normalizedemail,"OTP verification",`Your OTP code is ${otp}`,html)
 
    const resuser = {
     id: createduser._id,
-    username,
-    email,
+    username:createduser.username,
+    email:createduser.email,
     verified: createduser.verified
    }
 
    return res.status(201)
    .json(
-    new ApiResponse(200,resuser,"user created. check your email for OTP")
+    new ApiResponse(201,resuser,"user created. check your email for OTP")
    )
 
 }
 
 /**
  * @name loginuser 
- * @description logs in a user,expects username and password in its req
- * @returns id and username of logged in user
+ * @description logs in a user,expects email and password in its req
+ * @returns id,username,email,verified flag of logged in user
  */
 
 async function loginuser(req,res) {
-    const {username,password} = req.body
+    const {email,password} = req.body
 
     if (
-      [username,password].some((field)=> field?.trim() === "")
+      [email,password].some((field)=> !field?.trim())
    ) {
       throw new ApiError(400,"All fields are required")
    } 
 
-   const founduser = await User.findOne({username})
+   const Normalizedemail = email?.trim().toLowerCase()
+
+   const founduser = await User.findOne({email:Normalizedemail})
 
    if (!founduser) {
-    throw new ApiError(400,"username or password is incorrect")
+    throw new ApiError(400,"email or password is incorrect")
    }
 
    if (!founduser.verified) {
@@ -86,20 +88,21 @@ async function loginuser(req,res) {
    const validpassword = await founduser.isPasswordCorrect(password)
 
    if (!validpassword) {
-      throw new ApiError(400,"username or password is incorrect")
+      throw new ApiError(400,"email or password is incorrect")
    }
 
    const token = await founduser.generateToken()
 
    const loggedinuser = {
       id:founduser._id,
-      username,
+      username:founduser.username,
+      email:founduser.email,
       verified: founduser.verified
    }
 
    const options = {
-      httpOnly: true,
-      secure: true
+      httpOnly: true,//Makes the cookie inaccessible to JavaScript running in the browser (document.cookie can’t read it).
+      secure: true//Ensures the cookie is only sent over HTTPS connections.
    }
 
    return res.status(200)
@@ -169,7 +172,7 @@ async function verifyEmail(req,res) {
    }
 
    // Find the OTP record for this email
-   const otpRecord = await otpModel.findOne({email})
+   const otpRecord = await otpModel.findOne({email:email.trim().toLowerCase()})
 
    if (!otpRecord) {
       throw new ApiError(400, "OTP expired or not found")
@@ -185,6 +188,10 @@ async function verifyEmail(req,res) {
    // Find and update user as verified
    const user = await User.findByIdAndUpdate(otpRecord.user,{verified:true},{new: true})
 
+   if (!user) {
+     throw new ApiError(404, "User not found");
+   }
+
    // Delete OTP record after verification
    await otpModel.deleteOne({_id: otpRecord._id})
 
@@ -194,7 +201,7 @@ async function verifyEmail(req,res) {
    const data = {
       id: user._id,
       username: user.username,
-      email,
+      email:user.email,
       verified: user.verified
    }
 
