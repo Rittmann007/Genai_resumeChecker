@@ -7,21 +7,22 @@ const handleValidationErrors = require('../middleware/validation.middleware');
 
 router.post("/register",
 [  body('username')
-    .notEmpty()
-    .withMessage('Username is required')
     .trim()
+    .exists({ checkFalsy: true })
+    .withMessage('Username is required')
     .isLength({ min: 3, max: 30 })
     .withMessage('Username must be 3-30 characters'),
     
   body('email')
-    .notEmpty()
-    .withMessage('Email is required')
     .trim()
+    .exists({ checkFalsy: true })
+    .withMessage('Email is required')
     .isEmail()
     .withMessage('Invalid email format'),
     
   body('password')
-    .notEmpty()
+    .trim()// for whitesapce only passwords
+    .exists({ checkFalsy: true })
     .withMessage('Password is required')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters')
