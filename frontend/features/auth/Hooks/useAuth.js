@@ -38,11 +38,11 @@ export default function useAuth() {
     }
   }
 
-  async function handlelogin({ username, password }) {
+  async function handlelogin({ email, password }) {
     setloading(true);
     seterror(null)
     try {
-      const response = await login({ username, password });
+      const response = await login({ email, password });
       setuser(response.data);
     } catch (error) {
       const errorMessage = error.response?.data?.message||"login failed"

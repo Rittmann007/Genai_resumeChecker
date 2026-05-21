@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 function OtpSubmit() {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email;
+  const email = location.state?.email?.trim().toLowerCase();
 
   const { loading, handleOtpSubmit } = useAuth();
   const [otp, setOtp] = useState("");

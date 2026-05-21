@@ -48,12 +48,17 @@ function Register() {
       return;
     }
 
-    await handleregister({ 
-        username: username.trim(), 
-        email: email.trim(), 
-        password 
+    try {
+      await handleregister({
+        username: username.trim(),
+        email: email.trim().toLowerCase(),
+        password
       });
       navigate("/verify-otp", { state: { email: email.trim() } });
+   } catch (error) {
+     // Already handled in useAuth via seterror
+     // Keep user on register page
+   }
   }
 
   if (loading) {

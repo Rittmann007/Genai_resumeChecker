@@ -11,10 +11,10 @@ async function register({username,email,password}) {
     }
 }
 
-async function login({username,password}) {
+async function login({email,password}) {
     try {
         const response = await axios.post("http://localhost:3000/api/v1/users/login",
-            {username,password},
+            {email,password},
             {withCredentials: true} // for access to cookies
         )
         return response.data

@@ -5,17 +5,16 @@ import useAuth from "../Hooks/useAuth";
 function Login() {
   const navigate = useNavigate();
   const { loading, handlelogin, error, seterror } = useAuth();
-  const [username, setusername] = useState("");
+  const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
   async function handlesubmit(e) {
     e.preventDefault();
-      try {
-      await handlelogin({ username, password });
+    try {
+      await handlelogin({ email: email.trim().toLowerCase(), password });
       navigate("/");
     } catch (error) {
-      // Error already handled by handlelogin in useAuth
-      // Don't navigate
+    // already handled in useAuth via seterror
     }
   }
 
@@ -48,17 +47,17 @@ function Login() {
 
           <form className="space-y-6" onSubmit={handlesubmit}>
             <div className="space-y-2">
-              <label htmlFor="username" className="block text-sm font-medium">
-                Username
+              <label htmlFor="email" className="block text-sm font-medium">
+                Email
               </label>
               <input
                 type="text"
-                id="username"
-                name="username"
-                placeholder="Enter username"
-                value={username}
+                id="email"
+                name="email"
+                placeholder="Enter email"
+                value={email}
                 onChange={(e) => {
-                  setusername(e.target.value);
+                  setemail(e.target.value);
                   if (error) {
                     seterror(null);
                   }
