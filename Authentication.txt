@@ -2,6 +2,7 @@ Authentication flow
 
 backend----
 . register registers user and returns him
+. verify-email verifies the email with otp and returns the user
 . login logs in user and sets jwt token in cookies and also returns him
 . logout user logs out user by taking care of blacklist and removing cookies
 . now we have an auth middleware which verifies the middleware and sets req.user
@@ -23,5 +24,5 @@ frontend-----
   it fetches data from getcurrentuser which depends on cookie to return user
   in this way the session persists when page refreshes
 
-. in our register user auto logs in, so that he dont have to login again after register  
+. in our register user auto logs in after otp emailverification, so that he dont have to login again after register  
 
