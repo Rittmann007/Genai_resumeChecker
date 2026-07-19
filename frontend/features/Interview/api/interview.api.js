@@ -7,7 +7,7 @@ async function generateInterviewReport({jobDescription,selfDescription,resumeFil
     formdata.append("selfDescription",selfDescription)
     formdata.append("resume",resumeFile)
 
-    const response = await axios.post("http://localhost:3000/api/v1/interview/",formdata,
+    const response = await axios.post("https://genai-resumechecker-backend.onrender.com/api/v1/interview/",formdata,
         {headers:{
             "Content-Type": "multipart/form-data"},
             withCredentials:true
@@ -23,7 +23,7 @@ async function generateInterviewReport({jobDescription,selfDescription,resumeFil
 
 async function getInterviewReportByID(interviewID) {
     try {
-        const response = await axios.get(`http://localhost:3000/api/v1/interview/report/${interviewID}`,
+        const response = await axios.get(`https://genai-resumechecker-backend.onrender.com/api/v1/interview/report/${interviewID}`,
         {withCredentials:true}
     )
 
@@ -36,7 +36,7 @@ async function getInterviewReportByID(interviewID) {
 
 async function getAllInterviewReports() {
     try {
-        const response = await axios.get("http://localhost:3000/api/v1/interview/allreports",
+        const response = await axios.get("https://genai-resumechecker-backend.onrender.com/api/v1/interview/allreports",
         {withCredentials:true}
     )
 
@@ -49,7 +49,7 @@ async function getAllInterviewReports() {
 
 async function generateResumePdf({interviewID}) {
     try {
-        const response = await axios.post(`http://localhost:3000/api/v1/interview/resume/Pdf/${interviewID}`,
+        const response = await axios.post(`https://genai-resumechecker-backend.onrender.com/api/v1/interview/resume/Pdf/${interviewID}`,
         null,
         {responseType: "blob",
             withCredentials: true
