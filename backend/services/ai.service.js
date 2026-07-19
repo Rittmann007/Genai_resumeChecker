@@ -103,7 +103,11 @@ const geminiSchema = {
   ],
 };
 
-async function generateInterviewReport({jobdescription,resume,selfdescription,}){
+async function generateInterviewReport({
+  jobdescription,
+  resume,
+  selfdescription,
+}) {
   const prompt = `You are an expert interview coach. Analyze the candidate's profile and generate a comprehensive interview report.
 
 Resume:
@@ -147,28 +151,39 @@ Generate the following:
   };
 }
 
-async function convertHtmlToPdf(html){
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.setContent(html, { waitUntil: "networkidle0" });
-  const pdfBuffer = await page.pdf({ format: "A4",
-    printBackground: true,
-    preferCSSPageSize: true,   // ← respects your @page { size: A4 } CSS
-    margin: {
-      top: "15mm",
-      bottom: "15mm",
-      left: "15mm",
-      right: "15mm",
-  },
-  displayHeaderFooter: false,
-   });
-
-  await browser.close();
-
-  return pdfBuffer;
+async function convertHtmlToPdf(html) {
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+    const page = await browser.newPage();
+    // Use "domcontentloaded" instead of "networkidle0" to avoid timeout
+    // "domcontentloaded" waits only for DOM parsing, not all network requests
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      preferCSSPageSize: true,
+      margin: {
+        top: "15mm",
+        bottom: "15mm",
+        left: "15mm",
+        right: "15mm",
+      },
+      displayHeaderFooter: false,
+    });
+    await page.close();
+    return pdfBuffer;
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
 }
 
-async function generateResumePdf({ jobdescription, resume, selfdescription }) {
+async function generateResumePdf({ jobDescription, resume, selfDescription }) {
   const resumePdfSchema = {
     type: "object",
     properties: {
@@ -185,8 +200,8 @@ async function generateResumePdf({ jobdescription, resume, selfdescription }) {
 
 ## Input Details
 Resume/Experience: ${resume}
-Self Description: ${selfdescription}
-Job Description: ${jobdescription}
+Self Description: ${selfDescription}
+Job Description: ${jobDescription}
 
 ## Critical Requirements
 
@@ -265,7 +280,6 @@ The JSON must be parseable by JSON.parse() directly.
 Correct format:
   {"html": "<!DOCTYPE html><html><head>...</head><body>...</body></html>"}`;
 
-
   const response = await Ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: prompt,
@@ -275,14 +289,15 @@ Correct format:
     },
   });
 
-  const jsonContent = JSON.parse(response.text);
+  const rawText = response.text || "";
+  if (!rawText) throw new Error("Gemini returned empty response");
+  const jsonContent = JSON.parse(rawText);
+  if (!jsonContent.html) throw new Error("Gemini HTML missing");
 
-  if (jsonContent.html){
+  if (jsonContent.html) {
     const pdfBuffer = await convertHtmlToPdf(jsonContent.html);
     return pdfBuffer;
   }
-
-  
 }
 
 module.exports = { generateInterviewReport, generateResumePdf };
