@@ -26,3 +26,11 @@ frontend-----
 
 . in our register user auto logs in after otp emailverification, so that he dont have to login again after register  
 
+Note:
+Your frontend (genai-resume-checker.vercel.app) and backend (genai-resumechecker-backend.onrender.com) are on completely different top-level domains.
+From the browser's perspective, the cookie set by the backend is a "third-party cookie" when the frontend tries to use it,
+because the top-level page (vercel.app) is different from the cookie's domain (onrender.com).
+Edge and Chrome (especially newer versions like the 148 you're on) are increasingly blocking third-party cookies by default, 
+even when SameSite=None; Secure is set correctly. This used to work fine a year or two ago, 
+which is why so much backend tutorial code (including probably what you followed) 
+still shows this pattern — but it's becoming unreliable in current browsers regardless of how correctly you configure it.
