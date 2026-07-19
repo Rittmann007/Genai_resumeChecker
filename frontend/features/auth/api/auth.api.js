@@ -2,7 +2,7 @@ import axios from "axios"
 
 async function register({username,email,password}) {
     try {
-        const response = await axios.post("http://localhost:3000/api/v1/users/register",
+        const response = await axios.post("https://genai-resumechecker-backend.onrender.com/api/v1/users/register",
             {username,email,password}
         )
         return response.data
@@ -13,7 +13,7 @@ async function register({username,email,password}) {
 
 async function login({email,password}) {
     try {
-        const response = await axios.post("http://localhost:3000/api/v1/users/login",
+        const response = await axios.post("https://genai-resumechecker-backend.onrender.com/api/v1/users/login",
             {email,password},
             {withCredentials: true} // for access to cookies
         )
@@ -25,7 +25,7 @@ async function login({email,password}) {
 
 async function logout() {
     try {
-        const response = await axios.post("http://localhost:3000/api/v1/users/logout",{},
+        const response = await axios.post("https://genai-resumechecker-backend.onrender.com/api/v1/users/logout",{},
             {withCredentials: true}
         )
     } catch (error) {
@@ -35,7 +35,7 @@ async function logout() {
 
 async function getuser() {
     try {
-        const response = await axios.get("http://localhost:3000/api/v1/users/getuser",
+        const response = await axios.get("https://genai-resumechecker-backend.onrender.com/api/v1/users/getuser",
             {withCredentials: true}
         )
         return response.data
@@ -46,7 +46,7 @@ async function getuser() {
 
 async function otpSubmit({otp,email}) {
     try {
-        const response = await axios.post("http://localhost:3000/api/v1/users/verify-email",
+        const response = await axios.post("https://genai-resumechecker-backend.onrender.com/api/v1/users/verify-email",
             {otp,email},
             {withCredentials: true}
         )
