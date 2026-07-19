@@ -14,7 +14,7 @@ export default function useAuth() {
     seterror(null)
     try {
       const response = await register({ username, email, password });
-      setuser(response.data.data);
+      setuser(response.data);
       toast.success("User created successfully!");
     } catch (error) {
       const errorMessage = error.response?.data?.message||"Registration failed"
@@ -29,7 +29,7 @@ export default function useAuth() {
     setloading(true)
     try {
       const response = await otpSubmit({otp,email})
-      setuser(response.data.data)
+      setuser(response.data)
       toast.success("Email verified successfully!");
     } catch (error) {
       throw error
@@ -43,7 +43,7 @@ export default function useAuth() {
     seterror(null)
     try {
       const response = await login({ email, password });
-      setuser(response.data.data);
+      setuser(response.data);
     } catch (error) {
       const errorMessage = error.response?.data?.message||"login failed"
       seterror(errorMessage)
@@ -70,7 +70,7 @@ export default function useAuth() {
     async function getandsetuser() {
       try {
         const response = await getuser();
-        setuser(response.data.data);
+        setuser(response.data);
       } catch (error) {
         const status = error?.response?.status;
 
