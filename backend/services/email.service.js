@@ -1,35 +1,40 @@
-const nodemailer = require("nodemailer")
+const { google } = require("googleapis");
 
-const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 2525,
-    auth: {
-        user: process.env.BREVO_SMTP_USER,
-        pass: process.env.BREVO_SMTP_KEY
-    }
-})
-
-transporter.verify((error, success) => {
-    if (error) {
-        console.log("Error connecting to email server: ", error)
-    } else {
-        console.log("Email server is ready to send messages")
-    }
-})
+const oAuth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  "https://developers.google.com/oauthplayground"
+);
+oAuth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
 
 async function sendEmail(to, subject, text, html) {
-    try {
-        const info = await transporter.sendMail({
-            from: `"GenAi-ResumeChecker" <${process.env.BREVO_SENDER_EMAIL}>`,
-            to,
-            subject,
-            text,
-            html
-        })
-        console.log("Message sent: %s", info.messageId)
-    } catch (error) {
-        console.log("Error sending email: ", error)
-    }
+  try {
+    const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
+
+    const messageParts = [
+      `From: "GenAi-ResumeChecker" <${process.env.GOOGLE_USER}>`,
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      `Content-Type: text/html; charset=utf-8`,
+      "",
+      html,
+    ];
+    const message = messageParts.join("\n");
+
+    const encodedMessage = Buffer.from(message)
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    const result = await gmail.users.messages.send({
+      userId: "me",
+      requestBody: { raw: encodedMessage },
+    });
+    console.log("Message sent:", result.data.id);
+  } catch (error) {
+    console.log("Error sending email: ", error);
+  }
 }
 
-module.exports = sendEmail
+module.exports = sendEmail;
