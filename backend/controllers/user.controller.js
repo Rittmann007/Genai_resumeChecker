@@ -42,12 +42,12 @@ async function registeruser(req, res) {
     otpHash: otphash,
   });
 
-  await sendEmail(
+  await sendEmail(  // remove await when you have resend otp route
     Normalizedemail,
     "OTP verification",
     `Your OTP code is ${otp}`,
     html,
-  );
+  ).catch((err) => console.log("Error sending email: ", err));
 
   const resuser = {
     id: createduser._id,
