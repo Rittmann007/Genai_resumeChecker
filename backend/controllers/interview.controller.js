@@ -86,7 +86,7 @@ async function getAllInterviewReportsController(req,res) {
  */
 async function generateResumePdfController(req,res) {
     const {interviewID} = req.params
-    const report = await interviewReport.findById(interviewID)
+    const report = await interviewReport.findOne({ _id: interviewID, user: req.user._id })
     
     if (!report) {
         throw new ApiError(404,"report not found")

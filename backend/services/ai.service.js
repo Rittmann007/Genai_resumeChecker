@@ -1,5 +1,6 @@
 const { GoogleGenAI } = require("@google/genai");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
+const chromium = require("@sparticuz/chromium");
 
 const Ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GENAI_API_KEY,
@@ -155,12 +156,11 @@ async function convertHtmlToPdf(html) {
   let browser;
   try {
     browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
     });
     const page = await browser.newPage();
-    // Use "domcontentloaded" instead of "networkidle0" to avoid timeout
-    // "domcontentloaded" waits only for DOM parsing, not all network requests
     await page.setContent(html, { waitUntil: "domcontentloaded" });
     const pdfBuffer = await page.pdf({
       format: "A4",
