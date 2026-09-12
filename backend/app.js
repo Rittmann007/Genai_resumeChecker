@@ -27,7 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({
  origin: [
     "https://genai-resume-checker.vercel.app",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://localhost:5173"
   ],
   credentials: true
 }))
