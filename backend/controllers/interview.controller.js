@@ -142,6 +142,7 @@ async function chatWithBotController(req,res) {
     const response = await axios.post(`${process.env.RAG_SERVICE_URL}/chat`, {
         interviewID,
         userID: req.user._id,
+        sessionID: interviewID,
         message
     }, {
         headers: { "X-Internal-Key": process.env.INTERNAL_API_KEY }
