@@ -63,9 +63,24 @@ async function generateResumePdf({interviewID}) {
     
 }
 
+async function generateChatResponse({interviewID,query}) {
+    try {
+        const response = await axios.post(`https://genai-resumechecker-backend.onrender.com/api/v1/interview/chat/${interviewID}`,
+            {message:query},
+        {withCredentials:true}
+    )
+
+    return response.data
+    } catch (error) {
+        throw error
+    }
+    
+}
+
 export {
     generateInterviewReport,
     getInterviewReportByID,
     getAllInterviewReports,
-    generateResumePdf
+    generateResumePdf,
+    generateChatResponse
 }

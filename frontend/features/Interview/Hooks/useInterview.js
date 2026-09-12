@@ -1,4 +1,4 @@
-import {generateInterviewReport,getInterviewReportByID,getAllInterviewReports, generateResumePdf} from "../api/interview.api"
+import {generateInterviewReport,getInterviewReportByID,getAllInterviewReports, generateResumePdf, generateChatResponse} from "../api/interview.api"
 import {useContext, useState,useEffect} from "react"
 import {useParams} from "react-router-dom"
 import {InterviewContext} from "../Interview.stateContext"
@@ -8,7 +8,7 @@ export function useInterview() {
     const context = useContext(InterviewContext)
     const { interviewID } = useParams()
 
-    const {loading,setloading,report,setreport,reports,setreports} = context
+    const {loading,setloading,report,setreport,reports,setreports,Chatloading,setChatloading} = context
 
     async function generateReport({jobDescription,selfDescription,resumeFile}) {
         setloading(true)
@@ -66,6 +66,18 @@ export function useInterview() {
         }
     }
 
+    async function getChatResponse(interviewID,query) {
+        setChatloading(true)
+        try {
+            const response = await generateChatResponse({interviewID,query})
+            return response.data
+        } catch (error) {
+            toast.error("Error while generating chat response")
+        }finally{
+            setChatloading(false)
+        }
+    }
+
     useEffect(() => {
           if(interviewID){
             getReportByID(interviewID)
@@ -75,7 +87,7 @@ export function useInterview() {
         }, [interviewID])
         
         
-    return {loading,report,reports,generateReport,getReportByID,getAllReports,getPdf}
+    return {loading,report,reports,Chatloading,generateReport,getReportByID,getAllReports,getPdf,getChatResponse}
 }   
 
 
