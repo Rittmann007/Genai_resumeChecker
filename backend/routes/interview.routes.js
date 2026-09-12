@@ -1,6 +1,7 @@
 var express = require('express');
 const authUser = require('../middleware/auth.middleware');
-const { generateInterviewReportController, getInterviewReportByIDController, getAllInterviewReportsController, generateResumePdfController } = require('../controllers/interview.controller');
+const { generateInterviewReportController, getInterviewReportByIDController,
+     getAllInterviewReportsController, generateResumePdfController, chatWithBotController } = require('../controllers/interview.controller');
 const upload = require('../middleware/multer.middleware');
 var router = express.Router();
 
@@ -15,5 +16,8 @@ router.get("/allreports",authUser,getAllInterviewReportsController)
 
 // get a updated resume pdf fit to the given jobdescription
 router.post("/resume/Pdf/:interviewID",authUser,generateResumePdfController)
+
+// get response of the user query to the chatbot
+router.post("/chat/:interviewID", authUser, chatWithBotController)
 
 module.exports = router;

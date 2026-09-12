@@ -3,6 +3,7 @@ const {generateInterviewReport,generateResumePdf} = require("../services/ai.serv
 const interviewReport = require("../models/interviewReport.model")
 const ApiResponse = require("../utils/ApiResponse")
 const ApiError = require("../utils/ApiError")
+const axios = require("axios")
 
 /**
  * @name generateInterviewReportController 
@@ -33,6 +34,17 @@ async function generateInterviewReportController(req,res) {
         jobDescription,
         ...interviewReportByAi
     })
+
+    // fire-and-forget — don't block the response on this
+    axios.post(`${process.env.RAG_SERVICE_URL}/ingest`, {
+        interviewID: FinalInterviewReport._id,
+        userID: req.user._id,
+        resumeText: resumeContent.text,
+        jobDescription,
+        selfDescription
+    }, {
+        headers: { "X-Internal-Key": process.env.INTERNAL_API_KEY }
+    }).catch(err => console.log("Error ingesting chat context:", err.message))
 
     return res.status(201)
     .json(new ApiResponse(201,FinalInterviewReport,"Interview report generated successfully"))
@@ -105,7 +117,41 @@ async function generateResumePdfController(req,res) {
 
 }
 
+/**
+ * @name chatWithBotController
+ * @description gives the response of the user query
+ * from the rag chatbot microservice,acts as a proxy between frontend and microservice
+ * @input interviewID from params, message from body
+ * @returns response of the user query
+ * @access private
+ */
+async function chatWithBotController(req,res) {
+    const {interviewID} = req.params
+    const {message} = req.body
+
+    if (!message) {
+        throw new ApiError(400,"message is required")
+    }
+
+    const report = await interviewReport.findOne({ _id: interviewID, user: req.user._id })
+
+    if (!report) {
+        throw new ApiError(404,"report not found")
+    }
+
+    const response = await axios.post(`${process.env.RAG_SERVICE_URL}/chat`, {
+        interviewID,
+        userID: req.user._id,
+        message
+    }, {
+        headers: { "X-Internal-Key": process.env.INTERNAL_API_KEY }
+    })
+
+    return res.status(200)
+    .json(new ApiResponse(200,response.data,"chat response generated successfully"))
+}
+
 module.exports = {generateInterviewReportController
     ,getInterviewReportByIDController
     ,getAllInterviewReportsController
-,generateResumePdfController}
+,generateResumePdfController,chatWithBotController}
